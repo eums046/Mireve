@@ -33,42 +33,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="8dp"/>
 
-    <!-- Name EditText -->
-    <EditText
-        android:id="@+id/etName"
-        android:layout_width="0dp"
-        android:layout_height="56dp"
-        android:hint="Name"
-        android:background="@drawable/rounded_edittext"
-        android:padding="16dp"
-        android:textColorHint="#BDBDBD"
-        android:textColor="@android:color/black"
-        android:inputType="textPersonName"
-        app:layout_constraintTop_toBottomOf="@id/tvSubtitle"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="80dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"/>
-
-    <!-- Username EditText -->
-    <EditText
-        android:id="@+id/etUsername"
-        android:layout_width="0dp"
-        android:layout_height="56dp"
-        android:hint="Username"
-        android:background="@drawable/rounded_edittext"
-        android:padding="16dp"
-        android:textColorHint="#BDBDBD"
-        android:textColor="@android:color/black"
-        android:inputType="textPersonName"
-        app:layout_constraintTop_toBottomOf="@id/etName"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"/>
-
     <!-- Email EditText -->
     <EditText
         android:id="@+id/etEmail"
@@ -80,10 +44,10 @@
         android:textColorHint="#BDBDBD"
         android:textColor="@android:color/black"
         android:inputType="textEmailAddress"
-        app:layout_constraintTop_toBottomOf="@id/etUsername"
+        app:layout_constraintTop_toBottomOf="@id/tvSubtitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="80dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"/>
 

@@ -12,20 +12,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Mireve">
 
-        <activity
-            android:name=".MainActivity"
-            android:exported="true">
+        <activity android:name=".MainActivity" android:exported="true" />
+        <activity android:name=".LoginActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".LoginActivity" />
         <activity android:name=".SignupActivity" />
         <activity android:name=".DiaryListActivity" />
         <activity android:name=".AddEditDiaryActivity" />
         <activity android:name=".AboutActivity" />
+        <activity android:name=".UserProfileActivity" />
+        <activity android:name=".LogoutActivity" />
 
     </application>
 

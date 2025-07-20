@@ -31,7 +31,9 @@ class LoginActivity : AppCompatActivity() {
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        startActivity(Intent(this, DiaryListActivity::class.java))
+                        val intent = Intent(this, DiaryListActivity::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        startActivity(intent)
                         finish()
                     } else {
                         Toast.makeText(this, "Login failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
@@ -39,9 +41,20 @@ class LoginActivity : AppCompatActivity() {
                 }
         }
 
-        signupLink.setOnClickListener {
-            startActivity(Intent(this, SignupActivity::class.java))
-        }
+        // Set underlined and clickable 'Sign up'
+        val fullText = getString(R.string.signup_link).replace("<u>", "").replace("</u>", "")
+        val signUpText = "Sign up"
+        val start = fullText.indexOf(signUpText)
+        val end = start + signUpText.length
+        val spannable = android.text.SpannableString(fullText)
+        spannable.setSpan(android.text.style.UnderlineSpan(), start, end, 0)
+        spannable.setSpan(object : android.text.style.ClickableSpan() {
+            override fun onClick(widget: android.view.View) {
+                startActivity(Intent(this@LoginActivity, SignupActivity::class.java))
+            }
+        }, start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        signupLink.text = spannable
+        signupLink.movementMethod = android.text.method.LinkMovementMethod.getInstance()
 
         forgotPassword.setOnClickListener {
             val email = emailEditText.text.toString().trim()

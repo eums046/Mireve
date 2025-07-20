@@ -49,8 +49,19 @@ class SignupActivity : AppCompatActivity() {
                 }
         }
 
-        backToLogin.setOnClickListener {
-            finish()
-        }
+        // Set underlined and clickable 'Login'
+        val fullText = getString(R.string.back_to_login).replace("<u>", "").replace("</u>", "")
+        val loginText = "Login"
+        val start = fullText.indexOf(loginText)
+        val end = start + loginText.length
+        val spannable = android.text.SpannableString(fullText)
+        spannable.setSpan(android.text.style.UnderlineSpan(), start, end, 0)
+        spannable.setSpan(object : android.text.style.ClickableSpan() {
+            override fun onClick(widget: android.view.View) {
+                finish()
+            }
+        }, start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        backToLogin.text = spannable
+        backToLogin.movementMethod = android.text.method.LinkMovementMethod.getInstance()
     }
 }

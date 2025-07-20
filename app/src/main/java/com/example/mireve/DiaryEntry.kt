@@ -5,5 +5,6 @@ data class DiaryEntry(
     val title: String = "",
     val content: String? = null,
     val checklist: List<String>? = null,
+    val folderId: String? = null,
     val timestamp: Long = System.currentTimeMillis()
 )

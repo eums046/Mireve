@@ -1,5 +1,6 @@
 package com.example.mireve
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.*
@@ -13,6 +14,7 @@ class AddEditDiaryActivity : AppCompatActivity() {
     private var entryId: String? = null
     private var isChecklistMode = false
     private val checklistEditTexts = mutableListOf<EditText>()
+    private var folderId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +34,9 @@ class AddEditDiaryActivity : AppCompatActivity() {
         val tilContent = findViewById<View>(R.id.tilContent)
 
         entryId = intent.getStringExtra("ENTRY_ID")
+        folderId = intent.getStringExtra("FOLDER_ID")
+        // If folderId is empty string, treat as null (safe Kotlin idiom)
+        folderId = folderId?.takeIf { it.isNotBlank() }
 
         // Checklist logic
         fun showChecklistMode(show: Boolean) {
@@ -47,10 +52,15 @@ class AddEditDiaryActivity : AppCompatActivity() {
         btnAddChecklistItem.setOnClickListener {
             val itemEditText = EditText(this)
             itemEditText.hint = "Checklist item"
-            itemEditText.layoutParams = LinearLayout.LayoutParams(
+            itemEditText.setBackgroundResource(R.drawable.rounded_card)
+            itemEditText.setPadding(32, 24, 32, 24)
+            itemEditText.textSize = 16f
+            val params = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply { setMargins(0, 8, 0, 8) }
+            )
+            params.setMargins(0, 16, 0, 16)
+            itemEditText.layoutParams = params
             checklistContainer.addView(itemEditText, checklistContainer.childCount - 1)
             checklistEditTexts.add(itemEditText)
         }
@@ -98,6 +108,7 @@ class AddEditDiaryActivity : AppCompatActivity() {
             }
             val id = entryId ?: db.collection("users").document(userId).collection("entries").document().id
             val timestamp = System.currentTimeMillis()
+            // Always use the folderId from the intent (null if not in a folder)
             if (isChecklistMode) {
                 val checklist = checklistEditTexts.map { it.text.toString().trim() }.filter { it.isNotEmpty() }
                 if (checklist.isEmpty()) {
@@ -109,6 +120,7 @@ class AddEditDiaryActivity : AppCompatActivity() {
                     title = title,
                     checklist = checklist,
                     content = null,
+                    folderId = folderId,
                     timestamp = timestamp
                 )
                 db.collection("users").document(userId).collection("entries").document(id)
@@ -126,6 +138,7 @@ class AddEditDiaryActivity : AppCompatActivity() {
                     title = title,
                     content = content,
                     checklist = null,
+                    folderId = folderId,
                     timestamp = timestamp
                 )
                 db.collection("users").document(userId).collection("entries").document(id)
@@ -142,6 +155,16 @@ class AddEditDiaryActivity : AppCompatActivity() {
                     .addOnSuccessListener { finish() }
                     .addOnFailureListener { Toast.makeText(this, "Failed to delete entry", Toast.LENGTH_SHORT).show() }
             }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (FirebaseAuth.getInstance().currentUser == null) {
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(intent)
+            finish()
         }
     }
 }
