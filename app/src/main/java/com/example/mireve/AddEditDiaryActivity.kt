@@ -7,14 +7,22 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.text.Editable
+import android.text.TextWatcher
+import android.widget.ImageButton
+import android.widget.EditText
+import android.widget.CheckBox
 
 class AddEditDiaryActivity : AppCompatActivity() {
     private lateinit var db: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
     private var entryId: String? = null
-    private var isChecklistMode = false
-    private val checklistEditTexts = mutableListOf<EditText>()
     private var folderId: String? = null
+    private lateinit var checklistAdapter: ChecklistAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,41 +37,37 @@ class AddEditDiaryActivity : AppCompatActivity() {
         val saveButton = findViewById<Button>(R.id.btnSave)
         val deleteButton = findViewById<Button>(R.id.btnDelete)
         val switchChecklist = findViewById<Switch>(R.id.switchChecklist)
-        val checklistContainer = findViewById<LinearLayout>(R.id.checklistContainer)
         val btnAddChecklistItem = findViewById<Button>(R.id.btnAddChecklistItem)
+        val recyclerChecklist = findViewById<RecyclerView>(R.id.recyclerChecklist)
         val tilContent = findViewById<View>(R.id.tilContent)
+
+        val checklistItems = mutableListOf<String>()
+        checklistAdapter = ChecklistAdapter(checklistItems) { pos ->
+            checklistItems.removeAt(pos)
+            checklistAdapter.notifyItemRemoved(pos)
+        }
+        recyclerChecklist.layoutManager = LinearLayoutManager(this)
+        recyclerChecklist.adapter = checklistAdapter
+
+        switchChecklist.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                recyclerChecklist.visibility = View.VISIBLE
+                btnAddChecklistItem.visibility = View.VISIBLE
+                tilContent.visibility = View.GONE
+            } else {
+                recyclerChecklist.visibility = View.GONE
+                btnAddChecklistItem.visibility = View.GONE
+                tilContent.visibility = View.VISIBLE
+            }
+        }
+        btnAddChecklistItem.setOnClickListener {
+            checklistItems.add("")
+            checklistAdapter.notifyItemInserted(checklistItems.size - 1)
+        }
 
         entryId = intent.getStringExtra("ENTRY_ID")
         folderId = intent.getStringExtra("FOLDER_ID")
-        // If folderId is empty string, treat as null (safe Kotlin idiom)
         folderId = folderId?.takeIf { it.isNotBlank() }
-
-        // Checklist logic
-        fun showChecklistMode(show: Boolean) {
-            isChecklistMode = show
-            checklistContainer.visibility = if (show) View.VISIBLE else View.GONE
-            tilContent.visibility = if (show) View.GONE else View.VISIBLE
-        }
-
-        switchChecklist.setOnCheckedChangeListener { _, isChecked ->
-            showChecklistMode(isChecked)
-        }
-
-        btnAddChecklistItem.setOnClickListener {
-            val itemEditText = EditText(this)
-            itemEditText.hint = "Checklist item"
-            itemEditText.setBackgroundResource(R.drawable.rounded_card)
-            itemEditText.setPadding(32, 24, 32, 24)
-            itemEditText.textSize = 16f
-            val params = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            )
-            params.setMargins(0, 16, 0, 16)
-            itemEditText.layoutParams = params
-            checklistContainer.addView(itemEditText, checklistContainer.childCount - 1)
-            checklistEditTexts.add(itemEditText)
-        }
 
         // If editing, load entry
         if (entryId != null) {
@@ -75,25 +79,13 @@ class AddEditDiaryActivity : AppCompatActivity() {
                     if (entry != null) {
                         titleEditText.setText(entry.title)
                         if (!entry.checklist.isNullOrEmpty()) {
+                            checklistItems.addAll(entry.checklist)
+                            checklistAdapter.notifyDataSetChanged()
                             switchChecklist.isChecked = true
-                            showChecklistMode(true)
-                            // Populate checklist
-                            entry.checklist.forEach { item ->
-                                val itemEditText = EditText(this)
-                                itemEditText.setText(item)
-                                itemEditText.hint = "Checklist item"
-                                itemEditText.layoutParams = LinearLayout.LayoutParams(
-                                    LinearLayout.LayoutParams.MATCH_PARENT,
-                                    LinearLayout.LayoutParams.WRAP_CONTENT
-                                ).apply { setMargins(0, 8, 0, 8) }
-                                checklistContainer.addView(itemEditText, checklistContainer.childCount - 1)
-                                checklistEditTexts.add(itemEditText)
-                            }
                         } else {
                             switchChecklist.isChecked = false
-                            showChecklistMode(false)
-                            contentEditText.setText(entry.content ?: "")
                         }
+                        contentEditText.setText(entry.content ?: "")
                     }
                 }
         } else {
@@ -108,9 +100,8 @@ class AddEditDiaryActivity : AppCompatActivity() {
             }
             val id = entryId ?: db.collection("users").document(userId).collection("entries").document().id
             val timestamp = System.currentTimeMillis()
-            // Always use the folderId from the intent (null if not in a folder)
-            if (isChecklistMode) {
-                val checklist = checklistEditTexts.map { it.text.toString().trim() }.filter { it.isNotEmpty() }
+            if (switchChecklist.isChecked) {
+                val checklist = checklistItems.filter { it.isNotBlank() }
                 if (checklist.isEmpty()) {
                     Toast.makeText(this, "Add at least one checklist item", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
@@ -167,4 +158,39 @@ class AddEditDiaryActivity : AppCompatActivity() {
             finish()
         }
     }
+}
+
+class ChecklistAdapter(
+    private val items: MutableList<String>,
+    private val onDelete: (Int) -> Unit
+) : RecyclerView.Adapter<ChecklistAdapter.ChecklistViewHolder>() {
+    inner class ChecklistViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val checkBox: CheckBox = view.findViewById(R.id.checkBox)
+        val editText: EditText = view.findViewById(R.id.editText)
+        val btnDelete: ImageButton = view.findViewById(R.id.btnDelete)
+    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChecklistViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_checklist, parent, false)
+        return ChecklistViewHolder(view)
+    }
+    override fun onBindViewHolder(holder: ChecklistViewHolder, position: Int) {
+        holder.editText.setText(items[position])
+        holder.editText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                val pos = holder.bindingAdapterPosition
+                if (pos != RecyclerView.NO_POSITION) {
+                    items[pos] = s.toString()
+                }
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+        holder.btnDelete.setOnClickListener {
+            val pos = holder.bindingAdapterPosition
+            if (pos != RecyclerView.NO_POSITION) {
+                onDelete(pos)
+            }
+        }
+    }
+    override fun getItemCount() = items.size
 }

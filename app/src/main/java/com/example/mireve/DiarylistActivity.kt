@@ -35,6 +35,14 @@ class DiaryListActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Check login only once when activity is created
+        if (FirebaseAuth.getInstance().currentUser == null) {
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(intent)
+            finish()
+            return
+        }
         setContentView(R.layout.activity_diary_list)
 
         setSupportActionBar(findViewById(R.id.toolbar))
@@ -96,20 +104,11 @@ class DiaryListActivity : AppCompatActivity() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        if (FirebaseAuth.getInstance().currentUser == null) {
-            val intent = Intent(this, LoginActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-            startActivity(intent)
-            finish()
-        }
-    }
-
     private fun showNotes(folder: Folder? = null) {
         val userId = auth.currentUser?.uid ?: return
         showingFolders = false
         viewingFolder = folder
+        folderAdapter = null // Clear folder adapter reference
         recyclerView.adapter = adapter
         tabAllEntries.setBackgroundResource(R.drawable.rounded_tab_selected)
         tabFolders.setBackgroundResource(0)
@@ -195,5 +194,5 @@ class DiaryListActivity : AppCompatActivity() {
 }
 
 class FolderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-    val textView: TextView = view as TextView
+    val textView: TextView = (view as ViewGroup).getChildAt(0) as TextView
 }

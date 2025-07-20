@@ -44,16 +44,15 @@ class DiaryAdapter(
                 entry.checklist.forEach { item ->
                     val row = LinearLayout(context)
                     row.orientation = LinearLayout.HORIZONTAL
-                    val check = ImageView(context)
-                    check.setImageResource(android.R.drawable.checkbox_on_background)
-                    val lp = LinearLayout.LayoutParams(48, 48)
-                    lp.setMargins(0, 0, 16, 0)
-                    check.layoutParams = lp
-                    row.addView(check)
                     val text = TextView(context)
-                    text.text = item
+                    text.text = if (item.startsWith("[x] ")) item.removePrefix("[x] ") else item
                     text.textSize = 16f
                     text.setTextColor(ContextCompat.getColor(context, android.R.color.black))
+                    if (item.startsWith("[x] ")) {
+                        text.paintFlags = text.paintFlags or android.graphics.Paint.STRIKE_THRU_TEXT_FLAG
+                    } else {
+                        text.paintFlags = text.paintFlags and android.graphics.Paint.STRIKE_THRU_TEXT_FLAG.inv()
+                    }
                     row.addView(text)
                     contentContainer.addView(row)
                 }
