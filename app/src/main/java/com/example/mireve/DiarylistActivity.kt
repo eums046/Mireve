@@ -10,12 +10,18 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.GET
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class DiaryListActivity : AppCompatActivity() {
     private lateinit var db: FirebaseFirestore
@@ -29,9 +35,12 @@ class DiaryListActivity : AppCompatActivity() {
     private lateinit var tabAllEntries: TextView
     private lateinit var tabFolders: TextView
     private lateinit var tvNoteCount: TextView
-    private lateinit var fabAdd: FloatingActionButton
-    private lateinit var toolbar: androidx.appcompat.widget.Toolbar
+    private lateinit var fabAdd: ExtendedFloatingActionButton
+    private lateinit var ivProfile: ImageView
+    private lateinit var ivAbout: ImageView
     private var folderAdapter: RecyclerView.Adapter<FolderViewHolder>? = null
+    private lateinit var tvQuoteOfTheDay: TextView
+    private lateinit var tvQuoteAuthor: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +54,6 @@ class DiaryListActivity : AppCompatActivity() {
         }
         setContentView(R.layout.activity_diary_list)
 
-        setSupportActionBar(findViewById(R.id.toolbar))
         db = FirebaseFirestore.getInstance()
         auth = FirebaseAuth.getInstance()
         val userId = auth.currentUser?.uid ?: return
@@ -55,7 +63,10 @@ class DiaryListActivity : AppCompatActivity() {
         tabFolders = findViewById(R.id.tabFolders)
         tvNoteCount = findViewById(R.id.tvNoteCount)
         fabAdd = findViewById(R.id.fabAdd)
-        toolbar = findViewById(R.id.toolbar)
+        ivProfile = findViewById(R.id.ivProfile)
+        ivAbout = findViewById(R.id.ivAbout)
+        tvQuoteOfTheDay = findViewById(R.id.tvQuoteOfTheDay)
+        tvQuoteAuthor = findViewById(R.id.tvQuoteAuthor)
 
         adapter = DiaryAdapter(
             onItemClick = { entry ->
@@ -67,8 +78,19 @@ class DiaryListActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
+        // Set up click listeners
         tabAllEntries.setOnClickListener { showNotes() }
         tabFolders.setOnClickListener { showFolders() }
+
+        // Profile and About icon click listeners
+        ivProfile.setOnClickListener {
+            startActivity(Intent(this, UserProfileActivity::class.java))
+        }
+
+        ivAbout.setOnClickListener {
+            startActivity(Intent(this, AboutActivity::class.java))
+        }
+
         showNotes()
 
         fabAdd.setOnClickListener {
@@ -104,16 +126,49 @@ class DiaryListActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        fetchQuoteOfTheDay() // This already fetches a new quote every time
+    }
+
+    private fun fetchQuoteOfTheDay() {
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://zenquotes.io/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+        val service = retrofit.create(QuoteApi::class.java)
+        service.getQuote().enqueue(object : Callback<List<QuoteResponse>> {
+            override fun onResponse(call: Call<List<QuoteResponse>>, response: Response<List<QuoteResponse>>) {
+                val quote = response.body()?.firstOrNull()
+                if (quote != null) {
+                    tvQuoteOfTheDay.text = "\"${quote.q}\""
+                    tvQuoteAuthor.text = "- ${quote.a}"
+                    tvQuoteAuthor.visibility = View.VISIBLE
+                } else {
+                    tvQuoteOfTheDay.text = getString(R.string.quote_load_error)
+                    tvQuoteAuthor.visibility = View.GONE
+                }
+            }
+            override fun onFailure(call: Call<List<QuoteResponse>>, t: Throwable) {
+                tvQuoteOfTheDay.text = getString(R.string.quote_load_error)
+                tvQuoteAuthor.visibility = View.GONE
+            }
+        })
+    }
+
     private fun showNotes(folder: Folder? = null) {
         val userId = auth.currentUser?.uid ?: return
         showingFolders = false
         viewingFolder = folder
-        folderAdapter = null // Clear folder adapter reference
+        folderAdapter = null
         recyclerView.adapter = adapter
+
+        // Update tab styling
         tabAllEntries.setBackgroundResource(R.drawable.rounded_tab_selected)
-        tabFolders.setBackgroundResource(0)
-        supportActionBar?.setDisplayHomeAsUpEnabled(folder != null)
-        supportActionBar?.title = folder?.name ?: ""
+        tabAllEntries.setTextColor(getColor(android.R.color.white))
+        tabFolders.background = null
+        tabFolders.setTextColor(getColor(R.color.black))
+
         val query = db.collection("users").document(userId).collection("entries")
             .orderBy("timestamp", Query.Direction.DESCENDING)
         val filteredQuery = if (folder != null) query.whereEqualTo("folderId", folder.id) else query
@@ -128,8 +183,7 @@ class DiaryListActivity : AppCompatActivity() {
         val userId = auth.currentUser?.uid ?: return
         showingFolders = true
         viewingFolder = null
-        supportActionBar?.setDisplayHomeAsUpEnabled(false)
-        supportActionBar?.title = ""
+
         db.collection("users").document(userId).collection("folders")
             .orderBy("timestamp", Query.Direction.DESCENDING)
             .addSnapshotListener { value, _ ->
@@ -153,6 +207,7 @@ class DiaryListActivity : AppCompatActivity() {
                         val text = TextView(parent.context)
                         text.textSize = 20f
                         text.setPadding(32, 32, 32, 32)
+                        text.setTextColor(parent.context.getColor(android.R.color.black))
                         text.layoutParams = ViewGroup.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -170,29 +225,24 @@ class DiaryListActivity : AppCompatActivity() {
                 }
                 recyclerView.adapter = folderAdapter
             }
+
+        // Update tab styling
         tabFolders.setBackgroundResource(R.drawable.rounded_tab_selected)
-        tabAllEntries.setBackgroundResource(0)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_diary_list, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home && viewingFolder != null) {
-            // Back arrow pressed, return to folder list
-            showFolders()
-            return true
-        }
-        if (item.itemId == R.id.action_profile) {
-            startActivity(Intent(this, UserProfileActivity::class.java))
-            return true
-        }
-        return super.onOptionsItemSelected(item)
+        tabFolders.setTextColor(getColor(android.R.color.white))
+        tabAllEntries.background = null
+        tabAllEntries.setTextColor(getColor(R.color.black))
     }
 }
 
 class FolderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val textView: TextView = (view as ViewGroup).getChildAt(0) as TextView
 }
+
+interface QuoteApi {
+    @GET("api/today")
+    fun getQuote(): Call<List<QuoteResponse>>
+}
+data class QuoteResponse(
+    val q: String,
+    val a: String
+)

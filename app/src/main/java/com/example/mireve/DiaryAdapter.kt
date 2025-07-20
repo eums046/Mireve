@@ -44,6 +44,20 @@ class DiaryAdapter(
                 entry.checklist.forEach { item ->
                     val row = LinearLayout(context)
                     row.orientation = LinearLayout.HORIZONTAL
+                    row.setPadding(0, 4, 0, 4)
+                    // Add square checkbox
+                    val checkBoxView = View(context)
+                    val size = (20 * context.resources.displayMetrics.density).toInt()
+                    val params = LinearLayout.LayoutParams(size, size)
+                    params.setMargins(0, 0, 16, 0)
+                    checkBoxView.layoutParams = params
+                    if (item.startsWith("[x] ")) {
+                        checkBoxView.setBackgroundResource(android.R.drawable.checkbox_on_background)
+                    } else {
+                        checkBoxView.setBackgroundResource(android.R.drawable.checkbox_off_background)
+                    }
+                    row.addView(checkBoxView)
+                    // Checklist text
                     val text = TextView(context)
                     text.text = if (item.startsWith("[x] ")) item.removePrefix("[x] ") else item
                     text.textSize = 16f

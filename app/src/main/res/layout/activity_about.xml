@@ -3,135 +3,389 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="24dp">
 
-        <!-- App Title -->
-        <TextView
-            android:id="@+id/tvAppTitle"
-            android:layout_width="wrap_content"
+        <!-- Title Section with Gradient Background -->
+        <LinearLayout
+            android:id="@+id/titleSection"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/app_title"
-            android:textSize="48sp"
-            android:textStyle="bold"
-            android:layout_marginTop="40dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="32dp"
+            android:layout_marginTop="20dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Subtitle -->
-        <TextView
-            android:id="@+id/tvSubtitle"
-            android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/tvAboutTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/about_title"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:letterSpacing="0.1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/about_subtitle"
+                android:textSize="16sp"
+                android:textColor="#CCCCCC"
+                android:textStyle="italic" />
+        </LinearLayout>
+
+        <!-- Developer Grid with Modern Cards -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/devGrid"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/about_subtitle"
-            android:textSize="18sp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@id/tvAppTitle"
+            android:layout_marginTop="32dp"
+            android:paddingBottom="32dp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintTop_toBottomOf="@id/titleSection">
 
-        <!-- Developers Section -->
-        <TextView
-            android:id="@+id/tvDevelopersTitle"
+            <!-- Developer 1 (Top Left) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardDev1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="12dp"
+                app:cardBackgroundColor="#1A1A1A"
+                app:strokeColor="#333333"
+                app:strokeWidth="1dp"
+                app:layout_constraintEnd_toStartOf="@id/cardDev2"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/cardDev3">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="200dp"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="24dp">
+
+                    <!-- Profile Circle with Gradient -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="72dp"
+                        android:layout_height="72dp"
+                        app:cardCornerRadius="36dp"
+                        app:cardElevation="6dp"
+                        app:cardBackgroundColor="#333333">
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="@string/dev_placeholder_desc"
+                            android:src="@android:drawable/ic_menu_myplaces"
+                            app:tint="@android:color/white" />
+                    </androidx.cardview.widget.CardView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/role_lead_programmer"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/white"
+                        android:gravity="center_horizontal"
+                        android:textAlignment="center" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/member_1"
+                        android:textSize="14sp"
+                        android:textColor="#CCCCCC"
+                        android:gravity="center_horizontal"
+                        android:textAlignment="center" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:text="@string/desc_lead_programmer"
+                        android:textColor="#888888"
+                        android:textSize="12sp"
+                        android:textAlignment="center"
+                        android:lineSpacingExtra="2dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Developer 2 (Top Right) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardDev2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="12dp"
+                app:cardBackgroundColor="#1A1A1A"
+                app:strokeColor="#333333"
+                app:strokeWidth="1dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/cardDev1"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/cardDev4">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="200dp"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="24dp">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="72dp"
+                        android:layout_height="72dp"
+                        app:cardCornerRadius="36dp"
+                        app:cardElevation="6dp"
+                        app:cardBackgroundColor="#333333">
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="@string/dev_placeholder_desc"
+                            android:src="@android:drawable/ic_menu_myplaces"
+                            app:tint="@android:color/white" />
+                    </androidx.cardview.widget.CardView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/role_ui_designer"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/white"
+                        android:gravity="center_horizontal"
+                        android:textAlignment="center" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/member_2"
+                        android:textSize="14sp"
+                        android:textColor="#CCCCCC"
+                        android:gravity="center_horizontal"
+                        android:textAlignment="center" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:text="@string/desc_ui_designer"
+                        android:textColor="#888888"
+                        android:textSize="12sp"
+                        android:textAlignment="center"
+                        android:lineSpacingExtra="2dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Developer 3 (Bottom Left) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardDev3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="12dp"
+                app:cardBackgroundColor="#1A1A1A"
+                app:strokeColor="#333333"
+                app:strokeWidth="1dp"
+                app:layout_constraintEnd_toStartOf="@id/cardDev4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cardDev1"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="200dp"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="24dp">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="72dp"
+                        android:layout_height="72dp"
+                        app:cardCornerRadius="36dp"
+                        app:cardElevation="6dp"
+                        app:cardBackgroundColor="#333333">
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="@string/dev_placeholder_desc"
+                            android:src="@android:drawable/ic_menu_myplaces"
+                            app:tint="@android:color/white" />
+                    </androidx.cardview.widget.CardView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/role_database"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/white"
+                        android:gravity="center_horizontal"
+                        android:textAlignment="center" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/member_3"
+                        android:textSize="14sp"
+                        android:textColor="#CCCCCC"
+                        android:gravity="center_horizontal"
+                        android:textAlignment="center" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:text="@string/desc_database"
+                        android:textColor="#888888"
+                        android:textSize="12sp"
+                        android:textAlignment="center"
+                        android:lineSpacingExtra="2dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Developer 4 (Bottom Right) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardDev4"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="12dp"
+                app:cardBackgroundColor="#1A1A1A"
+                app:strokeColor="#333333"
+                app:strokeWidth="1dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/cardDev3"
+                app:layout_constraintTop_toBottomOf="@id/cardDev2"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="200dp"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="24dp">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="72dp"
+                        android:layout_height="72dp"
+                        app:cardCornerRadius="36dp"
+                        app:cardElevation="6dp"
+                        app:cardBackgroundColor="#333333">
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="@string/dev_placeholder_desc"
+                            android:src="@android:drawable/ic_menu_myplaces"
+                            app:tint="@android:color/white" />
+                    </androidx.cardview.widget.CardView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/role_documentation"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/white"
+                        android:gravity="center_horizontal"
+                        android:textAlignment="center" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/member_4"
+                        android:textSize="14sp"
+                        android:textColor="#CCCCCC"
+                        android:gravity="center_horizontal"
+                        android:textAlignment="center" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:text="@string/desc_documentation"
+                        android:textColor="#888888"
+                        android:textSize="12sp"
+                        android:textAlignment="center"
+                        android:lineSpacingExtra="2dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Modern Back Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnBackToMain"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/developers_title"
-            android:textSize="24sp"
-            android:textStyle="bold"
+            android:layout_height="56dp"
             android:layout_marginTop="40dp"
-            app:layout_constraintTop_toBottomOf="@id/tvSubtitle"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-        <!-- Developer 1 -->
-        <ImageView
-            android:id="@+id/ivDeveloper1"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@android:drawable/ic_menu_myplaces"
-            android:background="@android:color/darker_gray"
-            android:layout_marginTop="24dp"
-            app:layout_constraintTop_toBottomOf="@id/tvDevelopersTitle"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/tvDeveloper1Name"
-            android:contentDescription="@string/developer1_image_desc"/>
-
-        <TextView
-            android:id="@+id/tvDeveloper1Name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/developer1_name"
-            android:textSize="18sp"
+            android:paddingHorizontal="32dp"
+            android:backgroundTint="#2A2A2A"
+            android:text="@string/back_to_main"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
             android:textStyle="bold"
-            android:layout_marginStart="16dp"
-            app:layout_constraintTop_toTopOf="@id/ivDeveloper1"
-            app:layout_constraintStart_toEndOf="@id/ivDeveloper1"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:cornerRadius="28dp"
+            app:strokeColor="#444444"
+            app:strokeWidth="1dp"
+            app:icon="@android:drawable/ic_menu_revert"
+            app:iconTint="@android:color/white"
+            app:iconGravity="textStart"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/devGrid" />
 
+        <!-- Footer -->
         <TextView
-            android:id="@+id/tvDeveloper1Role"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/developer1_role"
-            android:textSize="14sp"
-            android:textColor="#666666"
-            app:layout_constraintTop_toBottomOf="@id/tvDeveloper1Name"
-            app:layout_constraintStart_toStartOf="@id/tvDeveloper1Name"/>
-
-        <!-- Developer 2 -->
-        <ImageView
-            android:id="@+id/ivDeveloper2"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@android:drawable/ic_menu_myplaces"
-            android:background="@android:color/darker_gray"
             android:layout_marginTop="24dp"
-            app:layout_constraintTop_toBottomOf="@id/ivDeveloper1"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/tvDeveloper2Name"
-            android:contentDescription="@string/developer2_image_desc"/>
-
-        <TextView
-            android:id="@+id/tvDeveloper2Name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/developer2_name"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginStart="16dp"
-            app:layout_constraintTop_toTopOf="@id/ivDeveloper2"
-            app:layout_constraintStart_toEndOf="@id/ivDeveloper2"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-        <TextView
-            android:id="@+id/tvDeveloper2Role"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/developer2_role"
-            android:textSize="14sp"
+            android:layout_marginBottom="24dp"
+            android:text="@string/footer_text"
             android:textColor="#666666"
-            app:layout_constraintTop_toBottomOf="@id/tvDeveloper2Name"
-            app:layout_constraintStart_toStartOf="@id/tvDeveloper2Name"/>
-
-        <!-- Add more developers as needed -->
-
-        <!-- App Version -->
-        <TextView
-            android:id="@+id/tvVersion"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/app_version"
             android:textSize="14sp"
-            android:textColor="#666666"
-            android:layout_marginTop="40dp"
-            app:layout_constraintTop_toBottomOf="@id/ivDeveloper2"
+            android:textStyle="italic"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintTop_toBottomOf="@id/btnBackToMain" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

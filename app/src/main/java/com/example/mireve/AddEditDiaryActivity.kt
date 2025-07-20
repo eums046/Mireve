@@ -16,6 +16,7 @@ import android.text.TextWatcher
 import android.widget.ImageButton
 import android.widget.EditText
 import android.widget.CheckBox
+import com.google.android.material.switchmaterial.SwitchMaterial
 
 class AddEditDiaryActivity : AppCompatActivity() {
     private lateinit var db: FirebaseFirestore
@@ -36,10 +37,13 @@ class AddEditDiaryActivity : AppCompatActivity() {
         val contentEditText = findViewById<EditText>(R.id.etContent)
         val saveButton = findViewById<Button>(R.id.btnSave)
         val deleteButton = findViewById<Button>(R.id.btnDelete)
-        val switchChecklist = findViewById<Switch>(R.id.switchChecklist)
+        val switchChecklist = findViewById<SwitchMaterial>(R.id.switchChecklist)
         val btnAddChecklistItem = findViewById<Button>(R.id.btnAddChecklistItem)
+        btnAddChecklistItem.visibility = View.GONE
         val recyclerChecklist = findViewById<RecyclerView>(R.id.recyclerChecklist)
-        val tilContent = findViewById<View>(R.id.tilContent)
+        val etContent = findViewById<EditText>(R.id.etContent)
+        val cardTextContent = findViewById<View>(R.id.cardTextContent)
+        val cardChecklistContent = findViewById<View>(R.id.cardChecklistContent)
 
         val checklistItems = mutableListOf<String>()
         checklistAdapter = ChecklistAdapter(checklistItems) { pos ->
@@ -51,13 +55,13 @@ class AddEditDiaryActivity : AppCompatActivity() {
 
         switchChecklist.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                recyclerChecklist.visibility = View.VISIBLE
+                cardChecklistContent.visibility = View.VISIBLE
+                cardTextContent.visibility = View.GONE
                 btnAddChecklistItem.visibility = View.VISIBLE
-                tilContent.visibility = View.GONE
             } else {
-                recyclerChecklist.visibility = View.GONE
+                cardChecklistContent.visibility = View.GONE
+                cardTextContent.visibility = View.VISIBLE
                 btnAddChecklistItem.visibility = View.GONE
-                tilContent.visibility = View.VISIBLE
             }
         }
         btnAddChecklistItem.setOnClickListener {

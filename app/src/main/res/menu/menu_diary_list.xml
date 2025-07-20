@@ -4,9 +4,13 @@
 
     <item
         android:id="@+id/action_profile"
-        android:title="@string/action_profile"
         android:icon="@drawable/ic_profile"
-        app:showAsAction="always"
-        app:iconTint="@android:color/black"/>
+        android:title="Profile"
+        app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/action_about"
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:title="About"
+        app:showAsAction="never" />
 </menu>
