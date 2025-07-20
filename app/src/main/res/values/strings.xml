@@ -30,8 +30,8 @@
     <string name="signup_subtitle">Create your account</string>
     <string name="confirm_password_hint">Confirm Password</string>
     <string name="password_hint">Password</string>
-    <string name="signup_link">Don\'t have an account? Sign up</string>
-    <string name="back_to_login"><u>Already have an account? Sign in</u></string>
+    <string name="signup_link">New to Mireve? &lt;u&gt;Sign up&lt;/u&gt;</string>
+    <string name="back_to_login">Already have an account? &lt;u&gt;Login&lt;/u&gt;</string>
     <string name="diary_title">Title</string>
     <string name="diary_date">Date</string>
     <string name="diary_content">Content</string>

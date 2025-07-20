@@ -1,20 +1,23 @@
 package com.example.mireve
 
+import android.content.Context
+import android.graphics.Typeface
+import android.text.SpannableString
+import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
 class DiaryAdapter(
-    private val onItemClick: (DiaryEntry) -> Unit,
-    private val onDeleteClick: (DiaryEntry) -> Unit
+    private val onItemClick: (DiaryEntry) -> Unit
 ) : ListAdapter<DiaryEntry, DiaryAdapter.DiaryViewHolder>(DiffCallback()) {
-
-    private var selectedPosition: Int? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DiaryViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_diary_entry, parent, false)
@@ -23,28 +26,47 @@ class DiaryAdapter(
 
     override fun onBindViewHolder(holder: DiaryViewHolder, position: Int) {
         val entry = getItem(position)
-        holder.bind(entry, position == selectedPosition)
+        holder.bind(entry)
         holder.itemView.setOnClickListener { onItemClick(entry) }
-        holder.itemView.setOnLongClickListener {
-            selectedPosition = if (selectedPosition == position) null else position
-            notifyDataSetChanged()
-            true
-        }
-        holder.deleteButton.setOnClickListener {
-            onDeleteClick(entry)
-            selectedPosition = null
-            notifyDataSetChanged()
-        }
     }
 
     class DiaryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val deleteButton: ImageButton = itemView.findViewById(R.id.btnDelete)
-        fun bind(entry: DiaryEntry, showDelete: Boolean) {
+        private val contentContainer: LinearLayout = itemView.findViewById(R.id.contentContainer)
+        fun bind(entry: DiaryEntry) {
             itemView.findViewById<TextView>(R.id.tvTitle).text = entry.title
-            itemView.findViewById<TextView>(R.id.tvContent).text = entry.content
-            val dateText = android.text.format.DateFormat.format("yyyy-MM-dd HH:mm", entry.timestamp)
+            val dateText = android.text.format.DateFormat.format("MMM d", entry.timestamp)
             itemView.findViewById<TextView>(R.id.tvDate).text = dateText
-            deleteButton.visibility = if (showDelete) View.VISIBLE else View.GONE
+            // Remove all previous views
+            contentContainer.removeAllViews()
+            val context = itemView.context
+            if (!entry.checklist.isNullOrEmpty()) {
+                // Show checklist items
+                entry.checklist.forEach { item ->
+                    val row = LinearLayout(context)
+                    row.orientation = LinearLayout.HORIZONTAL
+                    val check = ImageView(context)
+                    check.setImageResource(android.R.drawable.checkbox_on_background)
+                    val lp = LinearLayout.LayoutParams(48, 48)
+                    lp.setMargins(0, 0, 16, 0)
+                    check.layoutParams = lp
+                    row.addView(check)
+                    val text = TextView(context)
+                    text.text = item
+                    text.textSize = 16f
+                    text.setTextColor(ContextCompat.getColor(context, android.R.color.black))
+                    row.addView(text)
+                    contentContainer.addView(row)
+                }
+            } else if (!entry.content.isNullOrBlank()) {
+                // Show content as italic/quote
+                val text = TextView(context)
+                val spannable = SpannableString(entry.content)
+                spannable.setSpan(StyleSpan(Typeface.ITALIC), 0, spannable.length, 0)
+                text.text = spannable
+                text.textSize = 16f
+                text.setTextColor(ContextCompat.getColor(context, android.R.color.black))
+                contentContainer.addView(text)
+            }
         }
     }
 

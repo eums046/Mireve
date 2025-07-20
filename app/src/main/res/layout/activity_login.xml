@@ -3,75 +3,111 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="24dp">
+    android:background="@android:color/white">
 
-    <!-- Email EditText -->
+    <!-- App Name -->
+    <TextView
+        android:id="@+id/tvAppTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Mireve"
+        android:textSize="48sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/tvSubtitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="120dp"/>
+
+    <!-- Subtitle -->
+    <TextView
+        android:id="@+id/tvSubtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hold time in a whisper."
+        android:textSize="20sp"
+        android:textColor="@android:color/black"
+        app:layout_constraintTop_toBottomOf="@id/tvAppTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Username EditText -->
     <EditText
         android:id="@+id/etEmail"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="@string/email_hint"
+        android:layout_height="56dp"
+        android:hint="Username"
+        android:background="@drawable/rounded_edittext"
+        android:padding="16dp"
+        android:textColorHint="#BDBDBD"
+        android:textColor="@android:color/black"
         android:inputType="textEmailAddress"
-        android:autofillHints="emailAddress"
-        android:minHeight="48dp"
-        android:maxWidth="320dp"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvSubtitle"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="80dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"/>
 
     <!-- Password EditText -->
     <EditText
         android:id="@+id/etPassword"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="@string/password_hint"
+        android:layout_height="56dp"
+        android:hint="Password"
+        android:background="@drawable/rounded_edittext"
+        android:padding="16dp"
+        android:textColorHint="#BDBDBD"
+        android:textColor="@android:color/black"
         android:inputType="textPassword"
-        android:autofillHints="password"
-        android:minHeight="48dp"
-        android:maxWidth="320dp"
-        android:layout_marginBottom="16dp"
         app:layout_constraintTop_toBottomOf="@id/etEmail"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"/>
 
-    <!-- Login Button -->
-    <Button
-        android:id="@+id/btnLogin"
+    <!-- Forgot Password -->
+    <TextView
+        android:id="@+id/tvForgotPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/login"
+        android:text="Forgot password?"
         android:textColor="@android:color/black"
-        android:minHeight="48dp"
-        android:maxWidth="400dp"
-        android:layout_marginBottom="16dp"
+        android:textSize="14sp"
+        android:textStyle="normal"
         app:layout_constraintTop_toBottomOf="@id/etPassword"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="@id/etPassword"
+        android:layout_marginTop="8dp"/>
 
-    <!-- Signup Link -->
+    <!-- Sign In Button -->
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="200dp"
+        android:layout_height="56dp"
+        android:text="Sign In"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        android:backgroundTint="#CCCCCC"
+        android:background="@drawable/rounded_button"
+        app:layout_constraintTop_toBottomOf="@id/tvForgotPassword"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="48dp"/>
+
+    <!-- Sign Up Link -->
     <TextView
         android:id="@+id/tvSignupLink"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/signup_link"
         android:textColor="@android:color/black"
-        android:padding="8dp"
-        android:layout_marginBottom="8dp"
+        android:textSize="16sp"
         app:layout_constraintTop_toBottomOf="@id/btnLogin"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <!-- Forgot Password Link -->
-    <TextView
-        android:id="@+id/tvForgotPassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/forgot_password"
-        android:textColor="@android:color/holo_red_dark"
-        android:padding="8dp"
-        app:layout_constraintTop_toBottomOf="@id/tvSignupLink"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

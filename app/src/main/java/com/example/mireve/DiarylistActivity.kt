@@ -11,6 +11,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import android.widget.TextView
 
 class DiaryListActivity : AppCompatActivity() {
     private lateinit var db: FirebaseFirestore
@@ -21,7 +22,7 @@ class DiaryListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_diary_list)
 
-        setSupportActionBar(findViewById(R.id.toolbar))
+        // Removed setSupportActionBar(findViewById(R.id.toolbar)) as there is no Toolbar in the layout.
         db = FirebaseFirestore.getInstance()
         auth = FirebaseAuth.getInstance()
         val userId = auth.currentUser?.uid ?: return
@@ -32,17 +33,6 @@ class DiaryListActivity : AppCompatActivity() {
                 val intent = Intent(this, AddEditDiaryActivity::class.java)
                 intent.putExtra("ENTRY_ID", entry.id)
                 startActivity(intent)
-            },
-            onDeleteClick = { entry ->
-                androidx.appcompat.app.AlertDialog.Builder(this)
-                    .setTitle("Delete Entry")
-                    .setMessage("Are you sure you want to delete this entry?")
-                    .setPositiveButton("Delete") { _, _ ->
-                        db.collection("users").document(userId).collection("entries").document(entry.id)
-                            .delete()
-                    }
-                    .setNegativeButton("Cancel", null)
-                    .show()
             }
         )
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -53,9 +43,10 @@ class DiaryListActivity : AppCompatActivity() {
             .addSnapshotListener { value, _ ->
                 val entries = value?.toObjects(DiaryEntry::class.java) ?: emptyList()
                 adapter.submitList(entries)
+                findViewById<TextView>(R.id.tvNoteCount).text = "${entries.size} note" + if (entries.size == 1) "" else "s"
             }
 
-        findViewById<FloatingActionButton>(R.id.fabAdd).setOnClickListener {
+        findViewById<com.google.android.material.floatingactionbutton.FloatingActionButton>(R.id.fabAdd).setOnClickListener {
             startActivity(Intent(this, AddEditDiaryActivity::class.java))
         }
     }
