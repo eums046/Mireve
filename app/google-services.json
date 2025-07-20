@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "293685313905",
+    "project_id": "mireve-88738",
+    "storage_bucket": "mireve-88738.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:293685313905:android:d99f6fbee2322d612cf6d0",
+        "android_client_info": {
+          "package_name": "com.example.mireve"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyoWrzVJmUpVHhO41naLjlNtrCju66dv0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

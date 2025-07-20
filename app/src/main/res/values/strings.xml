@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mireve</string>
+    <string name="app_subtitle">Hold time in a whisper.</string>
+    <string name="login">Sign In</string>
+    <string name="signup">Sign Up</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="new_to_mireve">New to Mireve? Sign up</string>
+    <string name="already_have_account">Already have an account? Sign in</string>
+    <string name="my_diary">My Diary</string>
+    <string name="new_entry">New Entry</string>
+    <string name="save_entry">Save Entry</string>
+    <string name="about">About</string>
+    <string name="logout">Logout</string>
+    <string name="developers">Developers</string>
+    <string name="version">Version 1.0</string>
+    <string name="app_title">Mireve</string>
+    <string name="about_subtitle">About this app</string>
+    <string name="developers_title">Developers</string>
+    <string name="developer1_image_desc">Photo of Developer 1</string>
+    <string name="developer1_name">Developer 1</string>
+    <string name="developer1_role">Lead Developer</string>
+    <string name="developer2_image_desc">Photo of Developer 2</string>
+    <string name="developer2_name">Developer 2</string>
+    <string name="developer2_role">UI/UX Designer</string>
+    <string name="app_version">Version 1.0</string>
+    <string name="add_diary_entry">Add diary entry</string>
+    <string name="logo_desc">App logo</string>
+    <string name="main_subtitle">Hold time in a whisper.</string>
+    <string name="signup_subtitle">Create your account</string>
+    <string name="confirm_password_hint">Confirm Password</string>
+    <string name="password_hint">Password</string>
+    <string name="signup_link">Don\'t have an account? Sign up</string>
+    <string name="back_to_login"><u>Already have an account? Sign in</u></string>
+    <string name="diary_title">Title</string>
+    <string name="diary_date">Date</string>
+    <string name="diary_content">Content</string>
+    <string name="action_about">About</string>
+    <string name="action_logout">Logout</string>
+    <string name="action_profile">Profile</string>
+    <string name="email_hint">Email</string>
+    <string name="delete_entry">Delete entry</string>
+    <string name="fineprint_delete">Long press the entry to delete.</string>
+</resources>
