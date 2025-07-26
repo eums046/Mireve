@@ -5,9 +5,15 @@ import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import android.view.View
+import android.os.Handler
+import android.os.Looper
 
 class SignupActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
+    private lateinit var signupButton: Button
+    private lateinit var progressBar: ProgressBar
+    private var isProcessing = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,38 +25,34 @@ class SignupActivity : AppCompatActivity() {
         val emailEditText = findViewById<EditText>(R.id.etEmail)
         val passwordEditText = findViewById<EditText>(R.id.etPassword)
         val confirmPasswordEditText = findViewById<EditText>(R.id.etConfirmPassword)
-        val signupButton = findViewById<Button>(R.id.btnSignup)
+        signupButton = findViewById(R.id.btnSignup)
+        progressBar = findViewById(R.id.progressBar)
         val backToLogin = findViewById<TextView>(R.id.tvBackToLogin)
 
-        signupButton.setOnClickListener {
-            val email = emailEditText.text.toString().trim()
-            val password = passwordEditText.text.toString().trim()
-            val confirmPassword = confirmPasswordEditText.text.toString().trim()
+        progressBar.visibility = View.GONE
 
-            if (email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
-                Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show()
+        signupButton.setOnClickListener {
+            if (isProcessing) return@setOnClickListener
+            
+            val email = SecurityManager.sanitizeInput(emailEditText.text.toString())
+            val password = passwordEditText.text.toString()
+            val confirmPassword = confirmPasswordEditText.text.toString()
+
+            val validationResult = SecurityManager.validateSignupData(email, password, confirmPassword)
+            if (!validationResult.isValid) {
+                showError(validationResult.errorMessage ?: "Invalid input")
                 return@setOnClickListener
             }
-            if (password.length < 6) {
-                Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show()
+
+            if (SecurityManager.isAccountLocked(this, email)) {
+                val remainingTime = SecurityManager.getRemainingLockoutTime(this, email)
+                showError("Account is temporarily locked. Try again in $remainingTime minutes.")
                 return@setOnClickListener
             }
-            if (password != confirmPassword) {
-                Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            auth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        startActivity(Intent(this, DiaryListActivity::class.java))
-                        finish()
-                    } else {
-                        Toast.makeText(this, "Signup failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
-                    }
-                }
+
+            startSignupProcess(email, password)
         }
 
-        // Set underlined and clickable 'Login'
         val fullText = getString(R.string.back_to_login).replace("<u>", "").replace("</u>", "")
         val loginText = "Login"
         val start = fullText.indexOf(loginText)
@@ -64,5 +66,60 @@ class SignupActivity : AppCompatActivity() {
         }, start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         backToLogin.text = spannable
         backToLogin.movementMethod = android.text.method.LinkMovementMethod.getInstance()
+    }
+
+    private fun startSignupProcess(email: String, password: String) {
+        isProcessing = true
+        showLoading(true)
+        
+        SecurityManager.logSecurityEvent("Signup Attempt", "Email: $email")
+        
+        Handler(Looper.getMainLooper()).postDelayed({
+            auth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener { task ->
+                    isProcessing = false
+                    showLoading(false)
+                    
+                    if (task.isSuccessful) {
+                        SecurityManager.logSecurityEvent("Signup Success", "Email: $email")
+                        
+                        SecurityManager.resetFailedLoginAttempts(this, email)
+                        
+                        LoginManager.refreshLoginState(this, email)
+                        
+                        val deviceId = SecurityManager.getDeviceId(this)
+                        SecurityManager.logSecurityEvent("Device Registration", "Device: $deviceId")
+                        
+                        val intent = Intent(this, DiaryListActivity::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        startActivity(intent)
+                        finish()
+                    } else {
+                        val errorMessage = task.exception?.message ?: "Unknown error"
+                        SecurityManager.logSecurityEvent("Signup Failed", "Email: $email, Error: $errorMessage")
+                        
+                        val userFriendlyMessage = when {
+                            errorMessage.contains("email address is already in use") -> 
+                                "An account with this email already exists. Please try logging in instead."
+                            errorMessage.contains("network") -> 
+                                "Network error. Please check your internet connection and try again."
+                            errorMessage.contains("invalid") -> 
+                                "Invalid email or password format. Please check your input."
+                            else -> "Signup failed: $errorMessage"
+                        }
+                        
+                        showError(userFriendlyMessage)
+                    }
+                }
+        }, 1000)
+    }
+
+    private fun showLoading(show: Boolean) {
+        progressBar.visibility = if (show) View.VISIBLE else View.GONE
+        signupButton.isEnabled = !show
+    }
+
+    private fun showError(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 }

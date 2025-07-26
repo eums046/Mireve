@@ -19,11 +19,8 @@ class UserProfileActivity : AppCompatActivity() {
             val emailTextView = findViewById<TextView>(R.id.tvUserEmail)
             emailTextView.text = user?.email ?: "No email found"
             findViewById<Button>(R.id.btnLogout).setOnClickListener {
-                FirebaseAuth.getInstance().signOut()
-                val intent = Intent(this, LoginActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                val intent = Intent(this, LogoutActivity::class.java)
                 startActivity(intent)
-                finish()
             }
         } catch (e: Exception) {
             Log.e("UserProfileActivity", "Error in onCreate", e)

@@ -81,18 +81,19 @@
 
                     <!-- Profile Circle with Gradient -->
                     <androidx.cardview.widget.CardView
-                        android:layout_width="72dp"
-                        android:layout_height="72dp"
-                        app:cardCornerRadius="36dp"
-                        app:cardElevation="6dp"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        app:cardCornerRadius="40dp"
+                        app:cardElevation="8dp"
                         app:cardBackgroundColor="#333333">
                         <ImageView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:id="@+id/ivMember1"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
                             android:layout_gravity="center"
                             android:contentDescription="@string/dev_placeholder_desc"
-                            android:src="@android:drawable/ic_menu_myplaces"
-                            app:tint="@android:color/white" />
+                            android:src="@drawable/member_1"
+                            android:scaleType="centerCrop" />
                     </androidx.cardview.widget.CardView>
 
                     <TextView
@@ -154,18 +155,19 @@
                     android:padding="24dp">
 
                     <androidx.cardview.widget.CardView
-                        android:layout_width="72dp"
-                        android:layout_height="72dp"
-                        app:cardCornerRadius="36dp"
-                        app:cardElevation="6dp"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        app:cardCornerRadius="40dp"
+                        app:cardElevation="8dp"
                         app:cardBackgroundColor="#333333">
                         <ImageView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:id="@+id/ivMember2"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
                             android:layout_gravity="center"
                             android:contentDescription="@string/dev_placeholder_desc"
-                            android:src="@android:drawable/ic_menu_myplaces"
-                            app:tint="@android:color/white" />
+                            android:src="@drawable/member_2"
+                            android:scaleType="centerCrop" />
                     </androidx.cardview.widget.CardView>
 
                     <TextView
@@ -227,18 +229,19 @@
                     android:padding="24dp">
 
                     <androidx.cardview.widget.CardView
-                        android:layout_width="72dp"
-                        android:layout_height="72dp"
-                        app:cardCornerRadius="36dp"
-                        app:cardElevation="6dp"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        app:cardCornerRadius="40dp"
+                        app:cardElevation="8dp"
                         app:cardBackgroundColor="#333333">
                         <ImageView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:id="@+id/ivMember3"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
                             android:layout_gravity="center"
                             android:contentDescription="@string/dev_placeholder_desc"
-                            android:src="@android:drawable/ic_menu_myplaces"
-                            app:tint="@android:color/white" />
+                            android:src="@drawable/member_3"
+                            android:scaleType="centerCrop" />
                     </androidx.cardview.widget.CardView>
 
                     <TextView
@@ -300,18 +303,19 @@
                     android:padding="24dp">
 
                     <androidx.cardview.widget.CardView
-                        android:layout_width="72dp"
-                        android:layout_height="72dp"
-                        app:cardCornerRadius="36dp"
-                        app:cardElevation="6dp"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        app:cardCornerRadius="40dp"
+                        app:cardElevation="8dp"
                         app:cardBackgroundColor="#333333">
                         <ImageView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:id="@+id/ivMember4"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
                             android:layout_gravity="center"
                             android:contentDescription="@string/dev_placeholder_desc"
-                            android:src="@android:drawable/ic_menu_myplaces"
-                            app:tint="@android:color/white" />
+                            android:src="@drawable/member_4"
+                            android:scaleType="centerCrop" />
                     </androidx.cardview.widget.CardView>
 
                     <TextView
@@ -371,22 +375,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/devGrid" />
-
-        <!-- Footer -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="24dp"
-            android:text="@string/footer_text"
-            android:textColor="#666666"
-            android:textSize="14sp"
-            android:textStyle="italic"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btnBackToMain" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

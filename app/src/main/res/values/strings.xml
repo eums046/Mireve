@@ -9,6 +9,9 @@
     <string name="already_have_account">Already have an account? Sign in</string>
     <string name="my_diary">My Diary</string>
     <string name="new_entry">New Entry</string>
+    <string name="new_checklist">New Checklist</string>
+    <string name="edit_note">Edit Note</string>
+    <string name="edit_checklist">Edit Checklist</string>
     <string name="about">About</string>
     <string name="logout">Logout</string>
     <string name="developers">Developers</string>
@@ -49,7 +52,7 @@
     <string name="member_3">Jerick San Diego</string>
     <string name="member_4">Karl Justin Gueverra</string>
     <string name="desc_lead_programmer">Developed the core app logic, implemented authentication, and managed overall project structure.</string>
-    <string name="desc_ui_designer">Designed the app’s user interface, layouts, and ensured a modern, user-friendly experience.</string>
+    <string name="desc_ui_designer">Designed the app user interface, layouts, and ensured a modern, user-friendly experience.</string>
     <string name="desc_database">Handled Firestore database structure and data persistence.</string>
     <string name="desc_documentation">Prepared project documentation, and assisted in requirements gathering and reporting.</string>
     <string name="my_notes">My Notes</string>
@@ -74,6 +77,12 @@
     <string name="content_hint">Write your thoughts here…</string>
     <string name="checklist_items">Checklist Items</string>
     <string name="add_item">Add Item</string>
+    <string name="checklist_item_hint">Enter checklist item...</string>
+    <string name="delete_item">Delete item</string>
     <string name="save_entry">Save Entry</string>
     <string name="delete_entry">Delete Entry</string>
+    <string name="password_requirements">Password must be at least 8 characters with uppercase, lowercase, number, and special character</string>
+    <string name="account_locked">Account temporarily locked due to too many failed attempts</string>
+    <string name="invalid_email">Please enter a valid email address</string>
+    <string name="processing">Processing...</string>
 </resources>

@@ -3,8 +3,6 @@ package com.example.mireve
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -22,6 +20,9 @@ import retrofit2.http.GET
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import android.util.Log
+import android.os.Handler
+import android.os.Looper
 
 class DiaryListActivity : AppCompatActivity() {
     private lateinit var db: FirebaseFirestore
@@ -44,8 +45,23 @@ class DiaryListActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Check login only once when activity is created
-        if (FirebaseAuth.getInstance().currentUser == null) {
+        
+        val user = FirebaseAuth.getInstance().currentUser
+        val isLoggedIn = LoginManager.isLoggedIn(this)
+        val isSessionValid = LoginManager.isSessionValid(this)
+        
+        if (user == null && !isLoggedIn) {
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(intent)
+            finish()
+            return
+        } else if (user == null && isLoggedIn && isSessionValid) {
+            Log.d("DiaryListActivity", "Firebase session null but local login valid, attempting restore...")
+            attemptSessionRestore()
+            return
+        } else if (user == null) {
+            LoginManager.clearLoginState(this)
             val intent = Intent(this, LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
             startActivity(intent)
@@ -53,82 +69,12 @@ class DiaryListActivity : AppCompatActivity() {
             return
         }
         setContentView(R.layout.activity_diary_list)
-
-        db = FirebaseFirestore.getInstance()
-        auth = FirebaseAuth.getInstance()
-        val userId = auth.currentUser?.uid ?: return
-
-        recyclerView = findViewById(R.id.recyclerView)
-        tabAllEntries = findViewById(R.id.tabAllEntries)
-        tabFolders = findViewById(R.id.tabFolders)
-        tvNoteCount = findViewById(R.id.tvNoteCount)
-        fabAdd = findViewById(R.id.fabAdd)
-        ivProfile = findViewById(R.id.ivProfile)
-        ivAbout = findViewById(R.id.ivAbout)
-        tvQuoteOfTheDay = findViewById(R.id.tvQuoteOfTheDay)
-        tvQuoteAuthor = findViewById(R.id.tvQuoteAuthor)
-
-        adapter = DiaryAdapter(
-            onItemClick = { entry ->
-                val intent = Intent(this, AddEditDiaryActivity::class.java)
-                intent.putExtra("ENTRY_ID", entry.id)
-                startActivity(intent)
-            }
-        )
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = adapter
-
-        // Set up click listeners
-        tabAllEntries.setOnClickListener { showNotes() }
-        tabFolders.setOnClickListener { showFolders() }
-
-        // Profile and About icon click listeners
-        ivProfile.setOnClickListener {
-            startActivity(Intent(this, UserProfileActivity::class.java))
-        }
-
-        ivAbout.setOnClickListener {
-            startActivity(Intent(this, AboutActivity::class.java))
-        }
-
-        showNotes()
-
-        fabAdd.setOnClickListener {
-            val options = arrayOf("Add Note", "Add Folder")
-            AlertDialog.Builder(this)
-                .setTitle("Add...")
-                .setItems(options) { _, which ->
-                    if (which == 0) {
-                        val intent = Intent(this, AddEditDiaryActivity::class.java)
-                        viewingFolder?.let { intent.putExtra("FOLDER_ID", it.id) }
-                        startActivity(intent)
-                    } else {
-                        val input = EditText(this)
-                        input.hint = "Folder name"
-                        AlertDialog.Builder(this)
-                            .setTitle("New Folder")
-                            .setView(input)
-                            .setPositiveButton("Create") { _, _ ->
-                                val name = input.text.toString().trim()
-                                if (name.isNotEmpty()) {
-                                    val id = db.collection("users").document(userId).collection("folders").document().id
-                                    val folder = Folder(id = id, name = name, timestamp = System.currentTimeMillis())
-                                    db.collection("users").document(userId).collection("folders").document(id).set(folder)
-                                } else {
-                                    Toast.makeText(this, "Folder name required", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                            .setNegativeButton("Cancel", null)
-                            .show()
-                    }
-                }
-                .show()
-        }
+        initializeActivity()
     }
 
     override fun onResume() {
         super.onResume()
-        fetchQuoteOfTheDay() // This already fetches a new quote every time
+        fetchQuoteOfTheDay()
     }
 
     private fun fetchQuoteOfTheDay() {
@@ -163,7 +109,6 @@ class DiaryListActivity : AppCompatActivity() {
         folderAdapter = null
         recyclerView.adapter = adapter
 
-        // Update tab styling
         tabAllEntries.setBackgroundResource(R.drawable.rounded_tab_selected)
         tabAllEntries.setTextColor(getColor(android.R.color.white))
         tabFolders.background = null
@@ -226,11 +171,117 @@ class DiaryListActivity : AppCompatActivity() {
                 recyclerView.adapter = folderAdapter
             }
 
-        // Update tab styling
         tabFolders.setBackgroundResource(R.drawable.rounded_tab_selected)
         tabFolders.setTextColor(getColor(android.R.color.white))
         tabAllEntries.background = null
         tabAllEntries.setTextColor(getColor(R.color.black))
+    }
+    
+    private fun attemptSessionRestore() {
+        Handler(Looper.getMainLooper()).postDelayed({
+            val user = FirebaseAuth.getInstance().currentUser
+            if (user != null) {
+                Log.d("DiaryListActivity", "Firebase session restored for user: ${user.email}")
+                LoginManager.refreshLoginState(this, user.email ?: "")
+                setContentView(R.layout.activity_diary_list)
+                initializeActivity()
+            } else {
+                Log.d("DiaryListActivity", "Firebase session couldn't be restored, redirecting to login")
+                LoginManager.clearLoginState(this)
+                val intent = Intent(this, LoginActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(intent)
+                finish()
+            }
+        }, 1000)
+    }
+    
+    private fun initializeActivity() {
+        db = FirebaseFirestore.getInstance()
+        auth = FirebaseAuth.getInstance()
+        val userId = auth.currentUser?.uid ?: return
+
+        recyclerView = findViewById(R.id.recyclerView)
+        tabAllEntries = findViewById(R.id.tabAllEntries)
+        tabFolders = findViewById(R.id.tabFolders)
+        tvNoteCount = findViewById(R.id.tvNoteCount)
+        fabAdd = findViewById(R.id.fabAdd)
+        ivProfile = findViewById(R.id.ivProfile)
+        ivAbout = findViewById(R.id.ivAbout)
+        tvQuoteOfTheDay = findViewById(R.id.tvQuoteOfTheDay)
+        tvQuoteAuthor = findViewById(R.id.tvQuoteAuthor)
+
+        adapter = DiaryAdapter(
+            onItemClick = { entry ->
+                val intent = Intent(this, AddEditDiaryActivity::class.java)
+                intent.putExtra("ENTRY_ID", entry.id)
+                startActivity(intent)
+            }
+        )
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = adapter
+
+        tabAllEntries.setOnClickListener { showNotes() }
+        tabFolders.setOnClickListener { showFolders() }
+
+        ivProfile.setOnClickListener {
+            startActivity(Intent(this, UserProfileActivity::class.java))
+        }
+
+        ivAbout.setOnClickListener {
+            startActivity(Intent(this, AboutActivity::class.java))
+        }
+
+        showNotes()
+
+        fabAdd.setOnClickListener {
+            val options = arrayOf("Add Note", "Add Folder")
+            AlertDialog.Builder(this)
+                .setTitle("Add...")
+                .setItems(options) { _, which ->
+                    when (which) {
+                        0 -> {
+                            val intent = Intent(this, AddEditDiaryActivity::class.java)
+                            startActivity(intent)
+                        }
+                        1 -> {
+                            val folderName = EditText(this).apply {
+                                hint = "Folder name"
+                            }
+                            AlertDialog.Builder(this)
+                                .setTitle("Create Folder")
+                                .setView(folderName)
+                                .setPositiveButton("Create") { _, _ ->
+                                    val name = folderName.text.toString()
+                                    if (name.isNotEmpty()) {
+                                        val folder = Folder(
+                                            id = "",
+                                            name = name,
+                                            timestamp = System.currentTimeMillis()
+                                        )
+                                        db.collection("users").document(userId).collection("folders")
+                                            .add(folder)
+                                            .addOnSuccessListener { documentReference ->
+                                                val updatedFolder = folder.copy(id = documentReference.id)
+                                                db.collection("users").document(userId).collection("folders")
+                                                    .document(documentReference.id)
+                                                    .set(updatedFolder)
+                                            }
+                                    }
+                                }
+                                .setNegativeButton("Cancel", null)
+                                .show()
+                        }
+                    }
+                }
+                .show()
+        }
+
+        loadQuoteOfTheDay()
+    }
+
+    private fun loadQuoteOfTheDay() {
+        fetchQuoteOfTheDay()
     }
 }
 
