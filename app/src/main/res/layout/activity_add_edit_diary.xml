@@ -33,7 +33,6 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Title Input -->
             <EditText
                 android:id="@+id/etTitle"
                 android:layout_width="match_parent"
@@ -52,112 +51,33 @@
                 android:autofillHints="none"
                 android:importantForAutofill="no" />
 
-            <!-- Type Switch -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="24dp"
-                android:minHeight="48dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/checklist_mode"
-                    android:textSize="16sp"
-                    android:textColor="#212121"
-                    android:fontFamily="sans-serif" />
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/switchType"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="false"
-                    android:minWidth="48dp"
-                    android:minHeight="48dp" />
-            </LinearLayout>
-
-            <!-- Text Content Card -->
             <LinearLayout
                 android:id="@+id/cardTextContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:visibility="visible">
-
-                <EditText
-                    android:id="@+id/etContent"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minHeight="300dp"
-                    android:hint="@string/content_hint"
-                    android:textSize="16sp"
-                    android:textColor="#212121"
-                    android:textColorHint="#757575"
-                    android:background="@android:color/transparent"
-                    android:inputType="textMultiLine|textCapSentences"
-                    android:gravity="top"
-                    android:padding="8dp"
-                    android:lineSpacingExtra="4dp"
-                    android:fontFamily="sans-serif"
-                    android:autofillHints="none"
-                    android:importantForAutofill="no" />
-            </LinearLayout>
-
-            <!-- Checklist Content Card -->
-            <LinearLayout
-                android:id="@+id/cardChecklistContent"
+                android:visibility="visible"> <EditText
+                android:id="@+id/etContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <!-- Add Item Button -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="16dp"
-                    android:minHeight="48dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/checklist_items"
-                        android:textSize="18sp"
-                        android:textColor="#212121"
-                        android:fontFamily="sans-serif-medium" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnAddChecklistItem"
-                        style="@style/Widget.MaterialComponents.Button.TextButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/add_item"
-                        android:textSize="16sp"
-                        android:textColor="#212121"
-                        android:minWidth="48dp"
-                        android:minHeight="48dp" />
-                </LinearLayout>
-
-                <!-- Checklist Items -->
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerChecklist"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minHeight="100dp"
-                    android:nestedScrollingEnabled="false"
-                    tools:listitem="@layout/item_checklist" />
+                android:minHeight="300dp"
+                android:hint="@string/content_hint"
+                android:textSize="16sp"
+                android:textColor="#212121"
+                android:textColorHint="#757575"
+                android:background="@android:color/transparent"
+                android:inputType="textMultiLine|textCapSentences"
+                android:gravity="top"
+                android:padding="8dp"
+                android:lineSpacingExtra="4dp"
+                android:fontFamily="sans-serif"
+                android:autofillHints="none"
+                android:importantForAutofill="no" />
             </LinearLayout>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Bottom Buttons -->
     <LinearLayout
         android:id="@+id/layoutButtons"
         android:layout_width="0dp"
